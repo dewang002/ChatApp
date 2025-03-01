@@ -1,3 +1,4 @@
+import { generateToken } from "../db/utils.js";
 import User from "../models/auth.modal.js";
 import bcrypt from 'bcryptjs'
 
@@ -17,12 +18,15 @@ export const signup = async ( res, req ) => {
             fullName
         })
         if(newUser){
-
+            generateToken(newUser._id,res)
+            await newUser.save();
+            res.status(201).json({userId:newUser._id})
         }else{
             res.status(400).json({msg:'please enter right creadentials'})
         }
     }catch(err){
-
+        console.log("error while signingup controller, error.message")
+        res.status(501).json({msg:'something went wrong'})
     }
 }
 export const login = ( res, req ) => {
